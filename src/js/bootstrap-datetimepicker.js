@@ -413,6 +413,18 @@
                 if (dir) {
                     currentViewMode = Math.max(minViewModeNumber, Math.min(3, currentViewMode + dir));
                 }
+                if (datePickerModes[currentViewMode].clsName == 'times') {
+                    if (viewDate.format('A') === 'PM') {
+                        widget.find('.datepicker-times .am-times').hide();
+                        widget.find('.datepicker-times .pm-times').show();
+                        widget.find('.datepicker-times .btn-info').text('PM');
+                    } else {
+                        widget.find('.datepicker-times .am-times').show();
+                        widget.find('.datepicker-times .pm-times').hide();
+                        widget.find('.datepicker-times .btn-info').text('AM');
+                    }
+                }
+
                 widget.find('.datepicker > div').hide().filter('.datepicker-' + datePickerModes[currentViewMode].clsName).show();
             },
 
@@ -533,7 +545,7 @@
                 }
 
                 months.removeClass('active');
-                if (date.isSame(viewDate, 'y') && !unset) {
+                if (date.isSame(viewDate, 'month') && !unset) {
                     months.eq(date.month()).addClass('active');
                 }
 
@@ -696,7 +708,7 @@
 
                 updateDecades();
             },
-            
+
             updateTimes = function () {
                 var timesView = widget.find('.datepicker-times'),
                     timesViewHeader = timesView.find('th'),
@@ -719,6 +731,13 @@
                 }
 
                 var slotTime = viewDate.clone().set({hour:0,minute:0,second:0,millisecond:0});
+
+                times.removeClass('active');
+                if (date.isSame(viewDate, 'hour') && !unset) {
+                    if (date.isSame(viewDate, 'minute') && !unset) {
+                        times.filter(':contains("' + date.format("HH:mm") + '")').addClass('active');
+                    }
+                }
 
                 times.each(function (index) {
                     if (!isValid(slotTime, 'm')) {
@@ -971,7 +990,7 @@
                     updateTimes();
                     viewUpdate('d');
                 },
-                
+
                 selectTime: function (e) {
                     var date = viewDate.clone();
                     if ($(e.target).is('.old')) {
@@ -999,7 +1018,7 @@
                         hide();
                     }
                 },
-                
+
                 toggleTimes: function (e) {
                     if (widget.find('.datepicker-times .am-times').is(":visible")){
                         widget.find('.datepicker-times .am-times').hide();
